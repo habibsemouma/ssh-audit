@@ -2,3 +2,4 @@ env
 .env
 keys
 auth.log
+__pycache__

@@ -1,4 +1,4 @@
-<html class="h-screen">
+<html>
   <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link
@@ -9,34 +9,39 @@
   </head>
   <body class="h-full w-full">
     <div class="h-full w-full p-4 flex flex-col gap-4 bg-black">
-      <div class="w-full flex justify-end">
-        <button class="bg-purple-600 p-1.5 hover:bg-blue-600 text-white font-semibold rounded-md">Request data</button>
-      </div>
-      <div>
-        <!-- Table responsive wrapper -->
-        <div
-          class="overflow-x-auto bg-neutral-700 h-[150px] overflow-y-scroll"
+      <div class="w-full flex justify-end gap-4">
+        <input type="password" id="password" placeholder="password" class="bg-black border-b outline-none border-orange-600 text-white" />
+        <button
+          onclick="fetchSessionsAndPopulateTable()"
+          class="bg-purple-600 p-1.5 hover:bg-blue-600 text-white font-semibold rounded-md"
         >
-          <!-- Table -->
-          <table class="min-w-full text-left text-sm whitespace-nowrap">
-            <!-- Table head -->
-            <thead
-              class="uppercase text-white tracking-wider sticky top-0 bg-neutral-700 outline outline-2 outline-neutral-600 bg-neutral-800"
-            >
-              <tr>
-                <th scope="col" class="px-6 py-4">Datetime</th>
-                <th scope="col" class="px-6 py-4">User</th>
-                <th scope="col" class="px-6 py-4">Remote user</th>
-                <th scope="col" class="px-6 py-4">Session time</th>
-              </tr>
-            </thead>
+          Request data
+        </button>
+      </div>
 
-            <!-- Table body -->
-            <tbody id="sessions_table" class="text-white">
-                
-            </tbody>
-          </table>
-        </div>
+      <div class="overflow-x-auto bg-neutral-700 h-[150px] overflow-y-auto">
+        <!-- Updated Table -->
+        <table class="min-w-full text-left text-sm whitespace-nowrap mt-4">
+          <!-- Table head -->
+          <thead
+            class="uppercase text-white tracking-wider sticky top-0 bg-gray-700 outline outline-2 outline-neutral-600 bg-neutral-800 rounded-xl"
+          >
+            <tr>
+              <th scope="col" class="px-6 py-4">Start Datetime</th>
+              <th scope="col" class="px-6 py-4">End Datetime</th>
+              <th scope="col" class="px-6 py-4">Local User</th>
+              <th scope="col" class="px-6 py-4">Remote User</th>
+              <th scope="col" class="px-6 py-4">Process ID</th>
+              <th scope="col" class="px-6 py-4">IP Address</th>
+              <th scope="col" class="px-6 py-4">Local Port</th>
+            </tr>
+          </thead>
+
+          <!-- Table body -->
+          <tbody id="sessions_table" class="text-white">
+            <!-- JavaScript will dynamically add rows here -->
+          </tbody>
+        </table>
       </div>
     </div>
   </body>
