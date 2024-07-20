@@ -2,7 +2,7 @@ const sessions = [];
 
   function generateRow(session) {
     return `
-      <tr class="border-b dark:border-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-600 bg-neutral-50 dark:bg-neutral-800">
+      <tr class="border-b hover:bg-gray-800 dark bg-neutral-50">
         <td class="px-6 py-4">${session.start_datetime}</td>
         <td class="px-6 py-4">${session.end_datetime}</td>
         <td class="px-6 py-4">${session.local_user}</td>
@@ -15,7 +15,7 @@ const sessions = [];
 }
   
 function fetchSessionsAndPopulateTable() {
-  const url = 'http://localhost:5000/vps-logins';
+  const url = 'http://77.37.87.217:5000/vps-logins';
   const password = document.getElementById("password").value; //
 
   fetch(url, {
@@ -32,6 +32,13 @@ function fetchSessionsAndPopulateTable() {
       return response.json();
     })
     .then(data => {
+      data.sort((a, b) => {
+        let dateA = new Date(a.end_datetime);
+        let dateB = new Date(b.end_datetime);
+    
+        return dateB - dateA;
+    });
+
       const sessionsHtml = data.map(session => generateRow(session)).join('');
 
       const tableBody = document.getElementById('sessions_table');
