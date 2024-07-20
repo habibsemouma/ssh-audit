@@ -26,19 +26,19 @@ class Session():
 def process_sessions(keys_filepath,log_filepath):
     sessions=[]
     
-    users={key_idx:user_id for (key_idx, user_id) in enumerate([username.split("==")[1].replace("\n","") for username in open(keys_filepath,"r").readlines()])}
+    users={key_idx:user_id for (key_idx, user_id) in enumerate([username.split("==")[1].replace("\n","") for username in open(keys_filepath,"r").readlines()],start=1)}
     log_stream=open(log_filepath,"r").read()
-    pids=re.findall( r'sshd\[\d+\]',log_stream)
+    pids=set(re.findall( r'sshd\[(\d+)\]',log_stream))
 
     for process_id in pids:
         session=Session(process_id=process_id)
-        start_session_pattern = r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}\+\d{2}:\d{2} srv\d+ sshd\[\d+\]: Accepted key RSA SHA256:.* found at /home/.*/\.ssh/authorized_keys:\d+'
-        end_session_pattern = r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}\+\d{2}:\d{2} srv\d+ sshd\[\d+\]: pam_unix\(sshd:session\): session closed for user (.*)'
-        ip_pattern = r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}\+\d{2}:\d{2} srv\d+ sshd\[\d+\]: Connection from ([\d.]+) port (\d+) on ([\d.]+)'
- 
+        start_session_pattern =  rf'\d{{4}}-\d{{2}}-\d{{2}}T\d{{2}}:\d{{2}}:\d{{2}}\.\d{{6}}\+\d{{2}}:\d{{2}} srv\d+ sshd\[{process_id}\]: Accepted key RSA SHA256:.* found at /home/.*/\.ssh/authorized_keys:\d+' 
+        end_session_pattern = rf'\d{{4}}-\d{{2}}-\d{{2}}T\d{{2}}:\d{{2}}:\d{{2}}\.\d{{6}}\+\d{{2}}:\d{{2}} srv\d+ sshd\[{process_id}\]: pam_unix\(sshd:session\): session closed for user (.*)'
+        ip_pattern = rf'\d{{4}}-\d{{2}}-\d{{2}}T\d{{2}}:\d{{2}}:\d{{2}}\.\d{{6}}\+\d{{2}}:\d{{2}} srv\d+ sshd\[{process_id}\]: Connection from ([\d.]+) port (\d+) on ([\d.]+)'
         start_session_match = re.search(start_session_pattern, log_stream)
         end_session_match=re.search(end_session_pattern,log_stream)
         ip_match=re.search(ip_pattern,log_stream)
+        print(start_session_match)
 
         if start_session_match:
             date = start_session_match.group(0)[:32]
@@ -57,7 +57,7 @@ def process_sessions(keys_filepath,log_filepath):
             local_port=ip_match.group(2)
             session.ip_address=ip_address
             session.local_port=local_port
-        sessions.append(session.to_json())
+        if session.start_datetime is not None and session.remote_user is not None:sessions.append(session.to_json())
     
     
     return sessions
